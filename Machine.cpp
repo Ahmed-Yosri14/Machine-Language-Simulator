@@ -112,7 +112,7 @@ string Arthmetic_Unit::float_to_bi(double d)
     for (int i = 0; i < 8; i++)
     {
         d *= 2;
-        if (d > 1) val.push_back('1'), d--;
+        if (d >= 1) val.push_back('1'), d--;
         else val.push_back('0');
     }
     return val;
@@ -128,15 +128,24 @@ double Arthmetic_Unit::add_float(double val1, double val2)
 {
     double sum = val1 + val2;
     int exp{4};
-    string bi_val;
+    string bi_val, man;
     if (sum < 0) sum *= -1, bi_val.push_back('1');
     else bi_val.push_back('0');
-    string man = float_to_bi(sum);
-    while (man[0] == '0')
+
+    man = dec_to_base(sum, 2);
+    exp = min(static_cast<int>(exp + man.size()), 7);
+
+    sum -= static_cast<int>(sum);
+    string tmp = float_to_bi(sum);
+    if (exp == 4)
     {
-        exp--;
-        man.erase(0, 1);
+        while (exp && tmp[0] == '0')
+        {
+            exp--;
+            tmp.erase(0, 1);
+        }
     }
+    man += tmp;
     bi_val += dec_to_base(exp, 2) + man.substr(0, 4);
     return base_to_dec(bi_val, 2);
 }
@@ -194,7 +203,7 @@ void Machine::__6(string ins)
 {
     int r[3], exp{4};
     for (int i{}; i < 3; i++) r[i] = base_to_dec(ins[i + 1]);
-    R[r[0]] = AU.add_int(R[r[1]].float_value(), R[r[2]].float_value());
+    R[r[0]] = AU.add_float(R[r[1]].float_value(), R[r[2]].float_value());
 }
 
 // jump
@@ -257,6 +266,11 @@ bool Machine::run_one_cycle()
         case '5':
         {
             __5(ins);
+            return true;
+        }
+        case '6':
+        {
+            __6(ins);
             return true;
         }
         case 'B':

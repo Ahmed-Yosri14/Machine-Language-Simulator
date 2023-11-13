@@ -10,11 +10,7 @@ int main()
 {
     Machine machine;
     int op;
-    cout << "Welcome Ya A7la User ^^\n";
-    while (1)
-    {
-        int list_size = (machine.halted() ? 4 : 6);
-        vector<string> ls{
+    vector<string> ls{
             "Load a new program from a file",
             "Display screen content",
             "Display register content",
@@ -22,7 +18,10 @@ int main()
             "Run until halt",
             "Run one cycle",
         };
-
+    cout << "Welcome Ya A7la User ^^\n";
+    while (1)
+    {
+        int list_size = (machine.halted() ? 4 : 6);
         cout << "====================================\n";
         for (int i{1}; i <= list_size; i++)
         {
