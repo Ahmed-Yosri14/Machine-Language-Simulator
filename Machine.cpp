@@ -68,7 +68,7 @@ int Memory_Cell::twos_comp_value() const
         for (int i{sz - 1}; i >= 0; i--)
         {
             if (rev) bi_val[i] = !(bi_val[i] - '0') + '0';
-            if (bi_val[i] - '0') rev = true;
+            if (bi_val[i] - '0' != 0) rev = true;
         }
         return base_to_dec(bi_val, 2) * -1;
     }
@@ -86,7 +86,7 @@ double Memory_Cell::float_value() const
         num += (c - '0') * pow(2, exp);
         exp--;
     }
-    if (bi_val[0] - '0') num *= -1;
+    if (bi_val[0] - '0' != 0) num *= -1;
     return num;
 }
 
@@ -104,7 +104,7 @@ Register Register::operator=(const Memory_Cell &rhs)
     value = rhs.get_value();
     return *this;
 }
-Register Register::operator=(const int &rhs)
+Register Register::operator=(const int rhs)
 {
     value = rhs;
     return *this;
@@ -119,7 +119,7 @@ Register Register::operator+=(const Register &rhs)
     value += rhs.value;
     return *this;
 }
-Register Register::operator+=(const int &rhs)
+Register Register::operator+=(const int rhs)
 {
     value += rhs;
     return *this;
@@ -170,9 +170,9 @@ double Arthmetic_Unit::add_float(double val1, double val2)
     return base_to_dec(bi_val, 2);
 }
 
-bool Machine::valid_value(string ins)
+bool Machine::valid_value(string &ins)
 {
-    for (each c: ins) 
+    for (each c: ins)
     {
         if (c < '0' || c > 'F')
         {
@@ -182,21 +182,21 @@ bool Machine::valid_value(string ins)
     return true;
 }
 // copy from memory to register
-void Machine::__1(string ins)
+void Machine::__1(string &ins)
 {
     int register_idx = base_to_dec(ins[1]), memory_cell_idx = base_to_dec(ins.substr(2, 2), 16);
     R[register_idx] = M[memory_cell_idx];
 }
 
 // assign value to register
-void Machine::__2(string ins)
+void Machine::__2(string &ins)
 {
     int register_idx = base_to_dec(ins[1]), value = base_to_dec(ins.substr(2, 2), 16);
     R[register_idx] = value;
 }
 
 // copy from register to memory
-void Machine::__3(string ins)
+void Machine::__3(string &ins)
 {
     int register_idx = base_to_dec(ins[1]), memory_cell_idx = base_to_dec(ins.substr(2, 2), 16);
     M[memory_cell_idx] = R[register_idx];
@@ -204,14 +204,14 @@ void Machine::__3(string ins)
 }
 
 // copy from register to register
-void Machine::__4(string ins)
+void Machine::__4(string &ins)
 {
     int register_idx_1 = base_to_dec(ins[2]), register_idx_2 = base_to_dec(ins[3]);
     R[register_idx_2] = R[register_idx_1];
 }
 
 // add (2's complement)
-void Machine::__5(string ins)
+void Machine::__5(string &ins)
 {
     int r[3];
     for (int i{}; i < 3; i++) r[i] = base_to_dec(ins[i + 1]);
@@ -219,7 +219,7 @@ void Machine::__5(string ins)
 }
 
 // add (floating point)
-void Machine::__6(string ins)
+void Machine::__6(string &ins)
 {
     int r[3], exp{4};
     for (int i{}; i < 3; i++) r[i] = base_to_dec(ins[i + 1]);
@@ -227,7 +227,7 @@ void Machine::__6(string ins)
 }
 
 // jump
-void Machine::__B(string ins)
+void Machine::__B(string &ins)
 {
     int register_idx = base_to_dec(ins[1]), memory_cell_idx = base_to_dec(ins.substr(2, 2), 16);
     if (R[register_idx] == R[0]) PCtr = memory_cell_idx;
@@ -301,7 +301,7 @@ bool Machine::run_one_cycle()
             return true;
         }
     }
-    if (ins == "C000") 
+    if (ins == "C000")
     {
         halt = true;
         return true;
