@@ -1,3 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #include <iostream>
 #include <bits/stdc++.h>
 #include "Machine.cpp"
@@ -6,18 +9,18 @@
 using namespace std;
 
 
-int main() 
+int main()
 {
     Machine machine;
     int op;
-    vector<string> ls{
+    string ls[] = {
             "Load a new program from a file",
             "Display screen content",
             "Display register content",
             "Display memory content",
             "Run until halt",
             "Run one cycle",
-        };
+    };
     cout << "Welcome Ya A7la User ^^\n";
     while (1)
     {
@@ -115,6 +118,7 @@ int main()
             case 6:
             {
                 machine.run_one_cycle();
+                break;
             }
         }
     }
