@@ -32,6 +32,10 @@ class Register: public Memory_Cell
     bool operator==(const Memory_Cell &rhs) const;
     bool operator!=(const Memory_Cell &rhs) const;
     Register operator=(const Memory_Cell &rhs);
+    Register operator=(const int &rhs);
+    Register operator++();
+    Register operator+=(const Register &rhs);
+    Register operator+=(const int &rhs);
 };
 
 class Arthmetic_Unit
@@ -46,8 +50,8 @@ class Machine
 {
     Arthmetic_Unit AU;
     Memory_Cell *M;
-    Register *R;
-    int programCounter, rCount, mSize;
+    Register *R, PCtr, InsR;
+    int rCount, mSize;
     bool halt;
     string screen;
 
@@ -70,6 +74,8 @@ class Machine
     Memory_Cell &atM(int index);
     Register &atR(int index);
     void reset();
+    string PC();
+    string IR();
     bool halted();
     ~Machine();
 };

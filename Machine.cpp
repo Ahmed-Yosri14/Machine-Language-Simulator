@@ -104,6 +104,26 @@ Register Register::operator=(const Memory_Cell &rhs)
     value = rhs.get_value();
     return *this;
 }
+Register Register::operator=(const int &rhs)
+{
+    value = rhs;
+    return *this;
+}
+Register Register::operator++()
+{
+    value++;
+    return *this;
+}
+Register Register::operator+=(const Register &rhs)
+{
+    value += rhs.value;
+    return *this;
+}
+Register Register::operator+=(const int &rhs)
+{
+    value += rhs;
+    return *this;
+}
 
 
 string Arthmetic_Unit::float_to_bi(double d)
@@ -210,14 +230,14 @@ void Machine::__6(string ins)
 void Machine::__B(string ins)
 {
     int register_idx = base_to_dec(ins[1]), memory_cell_idx = base_to_dec(ins.substr(2, 2), 16);
-    if (R[register_idx] == R[0]) programCounter = memory_cell_idx;
+    if (R[register_idx] == R[0]) PCtr = memory_cell_idx;
 }
 
 Machine::Machine(int memory_size, int register_count) : mSize(memory_size), rCount(register_count)
 {
     M = new Memory_Cell[memory_size];
     R = new Register[register_count];
-    programCounter = 0;
+    PCtr = 0;
     halt = false;
 }
 
@@ -233,14 +253,16 @@ int Machine::memorySize()
 
 bool Machine::run_one_cycle()
 {
-    if (programCounter > 254)
+    if (PCtr.get_value() > 254 || halt)
     {
         halt = true;
         return false;
     }
-    string ins = M[programCounter].hex_value() + M[programCounter + 1].hex_value();
-    programCounter += 2; 
-    
+    string ins = M[PCtr.get_value()].hex_value();
+    ++PCtr;
+    ins += M[PCtr.get_value()].hex_value();
+    if (PCtr.get_value() < 255) ++PCtr;
+    InsR = base_to_dec(ins, 16);
     switch (ins[0])
     {
         case '1':
@@ -279,7 +301,7 @@ bool Machine::run_one_cycle()
             return true;
         }
     }
-    if (ins == "COOO") 
+    if (ins == "C000") 
     {
         halt = true;
         return true;
@@ -312,11 +334,18 @@ void Machine::reset()
     {
         M[i] = 0;
     }
-    programCounter = 0;
+    PCtr = 0;
     halt = false;
     screen.clear();
 }
-
+string Machine::PC()
+{
+    return PCtr.hex_value();
+}
+string Machine::IR()
+{
+    return InsR.hex_value();
+}
 bool Machine::halted()
 {
     return halt;

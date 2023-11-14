@@ -48,6 +48,14 @@ int main()
                 cout << "Filename: ";
                 cin >> file_name;
                 ifstream fs(file_name);
+                while (1)
+                {
+                    string hex_idx;
+                    cout << "Starting at (hex index): ";
+                    cin >> hex_idx;
+                    idx = base_to_dec(hex_idx, 16);
+                    if (idx >= 0 && idx < 256) break;
+                }
                 while (fs >> c)
                 {
                     content.push_back(c);
@@ -70,15 +78,29 @@ int main()
             {
                 for (int i{}; i < machine.registerCount(); i++)
                 {
-                    cout << dec_to_base(i, 16) << ": " << machine.atR(i).hex_value() << endl;
+                    cout << 'R' << dec_to_base(i, 16) << ": " << machine.atR(i).hex_value() << endl;
                 }
+                cout << "PC: " << machine.PC() << " IR: " << machine.IR() << endl;
                 break;
             }
             case 4:
             {
-                for (int i{}; i < machine.memorySize(); i++)
+                cout << "  ";
+                for (int i{}; i < 16; i++)
                 {
-                    cout << dec_to_base(i, 16) << ": " << machine.atM(i).hex_value() << endl;
+                    char c = (i < 10 ? i + '0' : i - 10 + 'A');
+                    cout << c << "  ";
+                }
+                cout << endl;
+                for (int i{}; i < 16; i++)
+                {
+                    char c = (i < 10 ? i + '0' : i - 10 + 'A');
+                    cout << c << " ";
+                    for (int j{}; j < 16; j++)
+                    {
+                        cout << machine.atM(i * 16 + j).hex_value() << " ";
+                    }
+                    cout << endl;
                 }
                 break;
             }
@@ -88,6 +110,7 @@ int main()
                 {
                     machine.run_one_cycle();
                 }
+                break;
             }
             case 6:
             {
