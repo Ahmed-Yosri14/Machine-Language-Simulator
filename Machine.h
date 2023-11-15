@@ -13,10 +13,10 @@ int base_to_dec(char c);
 
 class Memory_Cell
 {
-    protected:
+protected:
     int value{0};
 
-    public:
+public:
     Memory_Cell(int val = 0);
     void set_value(int val);
     int get_value() const;
@@ -28,19 +28,19 @@ class Memory_Cell
 
 class Register: public Memory_Cell
 {
-    public:
+public:
     bool operator==(const Memory_Cell &rhs) const;
     bool operator!=(const Memory_Cell &rhs) const;
     Register operator=(const Memory_Cell &rhs);
-    Register operator=(const int &rhs);
+    Register operator=(const int rhs);
     Register operator++();
     Register operator+=(const Register &rhs);
-    Register operator+=(const int &rhs);
+    Register operator+=(const int rhs);
 };
 
 class Arthmetic_Unit
 {
-    public:
+public:
     string float_to_bi(double d);
     int add_int(int val1, int val2);
     double add_float(double val1, double val2);
@@ -55,18 +55,18 @@ class Machine
     bool halt;
     string screen;
 
-    bool valid_value(string ins);
-    void __1(string ins);
-    void __2(string ins);
-    void __3(string ins);
-    void __4(string ins);
-    void __5(string ins);
-    void __6(string ins);
-    void __B(string ins);
+    bool valid_value(string &ins);
+    void __1(string &ins);
+    void __2(string &ins);
+    void __3(string &ins);
+    void __4(string &ins);
+    void __5(string &ins);
+    void __6(string &ins);
+    void __B(string &ins);
 
-    public: 
+public:
     Machine(int memory_size = 256, int register_count = 16);
-    
+
     int registerCount();
     int memorySize();
     bool run_one_cycle();
